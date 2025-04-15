@@ -14,13 +14,18 @@ const mongoUrl = process.env.MONGODB_URL;
 // Connect to MongoDB
 import { User } from './models/User';
 
-// Initialize database tables
-User.createTable()
+// Test database connection and initialize tables
+User.pool.connect()
+  .then(client => {
+    console.log('Successfully connected to PostgreSQL database');
+    client.release();
+    return User.createTable();
+  })
   .then(() => {
-    console.log('Database tables initialized');
+    console.log('Database tables initialized successfully');
   })
   .catch((error) => {
-    console.error('Database initialization error:', error);
+    console.error('Database connection/initialization error:', error);
     process.exit(1);
   });
 
