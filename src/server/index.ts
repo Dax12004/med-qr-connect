@@ -11,6 +11,10 @@ const app = express();
 const port = process.env.PORT || 5000;
 const mongoUrl = process.env.MONGODB_URL;
 
+// Enable CORS and JSON parsing
+app.use(cors());
+app.use(express.json());
+
 if (!mongoUrl) {
   console.error('MONGODB_URL environment variable is not set');
   process.exit(1);
