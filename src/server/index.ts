@@ -31,6 +31,17 @@ app.use(express.json());
 
 app.use('/api/users', userRoutes);
 
+// Test endpoint to check database connection
+app.get('/api/health', async (req, res) => {
+  try {
+    await mongoose.connection.db.admin().ping();
+    res.json({ status: 'Database connected successfully' });
+  } catch (error) {
+    console.error('Database connection error:', error);
+    res.status(500).json({ status: 'Database connection failed', error: error.message });
+  }
+});
+
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);
 });

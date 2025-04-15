@@ -1,108 +1,46 @@
-
 import React, { useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 
-// Mock users for the interface
-const MOCK_USERS = [
-  {
-    id: "p1",
-    name: "John Doe",
-    email: "patient@example.com",
-    role: "patient",
-    status: "active",
-    joinedDate: "2023-01-15",
-  },
-  {
-    id: "d1",
-    name: "Dr. Smith",
-    email: "doctor@example.com",
-    role: "doctor",
-    status: "active",
-    joinedDate: "2023-02-10",
-    specialization: "Cardiology",
-  },
-  {
-    id: "a1",
-    name: "Admin User",
-    email: "admin@example.com",
-    role: "admin",
-    status: "active",
-    joinedDate: "2023-01-01",
-  },
-  {
-    id: "d2",
-    name: "Dr. Jane Doe",
-    email: "jane.doe@example.com",
-    role: "doctor",
-    status: "pending",
-    joinedDate: "2023-04-20",
-    specialization: "Dermatology",
-  },
-  {
-    id: "p2",
-    name: "Alice Johnson",
-    email: "alice@example.com",
-    role: "patient",
-    status: "active",
-    joinedDate: "2023-03-05",
-  },
-  {
-    id: "d3",
-    name: "Dr. Robert Johnson",
-    email: "robert.j@example.com",
-    role: "doctor",
-    status: "pending",
-    joinedDate: "2023-04-25",
-    specialization: "Orthopedics",
-  },
-];
-
-const AdminUsers = () => {
-  // State for user management
-  const [users, setUsers] = useState(MOCK_USERS);
+const Users = () => {
+  // State for user management (will be populated from database)
+  const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  
+
   // State for filtering
   const [roleFilter, setRoleFilter] = useState<"all" | "patient" | "doctor" | "admin">("all");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "pending" | "inactive">("all");
   const [searchQuery, setSearchQuery] = useState("");
-  
-  // Handle user approval
+
+  // Handle user approval (database interaction needed)
   const handleApproveUser = (userId: string) => {
-    setUsers(
-      users.map((user) =>
-        user.id === userId ? { ...user, status: "active" } : user
-      )
-    );
+    // Update user status in database
+    // ... database interaction ...
   };
-  
-  // Handle user edit (in a real app, this would update the user in the database)
+
+  // Handle user edit (database interaction needed)
   const handleEditUser = () => {
     if (!selectedUser) return;
-    
-    setUsers(
-      users.map((user) =>
-        user.id === selectedUser.id ? { ...selectedUser } : user
-      )
-    );
-    
+
+    // Update user in database
+    // ... database interaction ...
+
     setIsEditModalOpen(false);
     setSelectedUser(null);
   };
-  
-  // Filter users based on filters and search query
-  const filteredUsers = users.filter((user) => {
+
+  // Filter users based on filters and search query (data from database)
+  const filteredUsers = users.filter((user: any) => { // Added type any to handle potential issues
     // Filter by role
     if (roleFilter !== "all" && user.role !== roleFilter) {
       return false;
     }
-    
+
     // Filter by status
     if (statusFilter !== "all" && user.status !== statusFilter) {
       return false;
     }
-    
+
     // Filter by search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
@@ -111,7 +49,7 @@ const AdminUsers = () => {
         user.email.toLowerCase().includes(query)
       );
     }
-    
+
     return true;
   });
 
@@ -144,7 +82,7 @@ const AdminUsers = () => {
                 </svg>
               </div>
             </div>
-            
+
             <div>
               <select
                 value={roleFilter}
@@ -157,7 +95,7 @@ const AdminUsers = () => {
                 <option value="admin">Admins</option>
               </select>
             </div>
-            
+
             <div>
               <select
                 value={statusFilter}
@@ -197,7 +135,7 @@ const AdminUsers = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredUsers.map((user) => (
+                {filteredUsers.map((user: any) => ( // Added type any to handle potential issues
                   <tr key={user.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
@@ -263,7 +201,7 @@ const AdminUsers = () => {
                     </td>
                   </tr>
                 ))}
-                
+
                 {filteredUsers.length === 0 && (
                   <tr>
                     <td colSpan={5} className="px-6 py-4 whitespace-nowrap text-center text-gray-500">
@@ -282,7 +220,7 @@ const AdminUsers = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
             <h3 className="text-lg font-semibold text-medical-dark mb-4">Edit User</h3>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -295,7 +233,7 @@ const AdminUsers = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Email
@@ -307,7 +245,7 @@ const AdminUsers = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Status
@@ -322,7 +260,7 @@ const AdminUsers = () => {
                   <option value="inactive">Inactive</option>
                 </select>
               </div>
-              
+
               {selectedUser.role === "doctor" && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -337,7 +275,7 @@ const AdminUsers = () => {
                 </div>
               )}
             </div>
-            
+
             <div className="mt-6 flex justify-end space-x-4">
               <button
                 onClick={() => {
@@ -362,4 +300,4 @@ const AdminUsers = () => {
   );
 };
 
-export default AdminUsers;
+export default Users;
