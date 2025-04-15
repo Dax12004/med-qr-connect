@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -23,7 +24,7 @@ import PatientProfile from "./pages/patient/Profile";
 
 // Doctor Pages
 import DoctorDashboard from "./pages/doctor/Dashboard";
-import DoctorPatients from "./pages/doctor/Patients";
+import DoctorPatients from "@/pages/doctor/Patients";
 import DoctorPatientDetail from "./pages/doctor/PatientDetail";
 import DoctorAppointments from "./pages/doctor/Appointments";
 import DoctorProfile from "./pages/doctor/Profile";
