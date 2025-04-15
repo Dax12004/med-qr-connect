@@ -4,8 +4,13 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import userRoutes from './routes/userRoutes';
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -31,8 +36,8 @@ mongoose.connect(mongoUrl)
     process.exit(1);
   });
 
-app.use(cors());
-app.use(express.json());
+// Serve static files from the dist directory
+app.use(express.static(join(__dirname, '../../dist')));
 
 app.use('/api/users', userRoutes);
 
@@ -45,6 +50,11 @@ app.get('/api/health', async (req, res) => {
     console.error('Database connection error:', error);
     res.status(500).json({ status: 'Database connection failed', error: error.message });
   }
+});
+
+// Serve the frontend for all other routes
+app.get('*', (req, res) => {
+  res.sendFile(join(__dirname, '../../dist/index.html'));
 });
 
 app.listen(port, host, () => {
