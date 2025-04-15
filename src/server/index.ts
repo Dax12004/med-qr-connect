@@ -9,7 +9,7 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
-const mongoUrl = process.env.MONGODB_URL || 'mongodb://localhost:27017/medical-db';
+const mongoUrl = process.env.MONGODB_URL;
 
 mongoose.connect(mongoUrl)
   .then(() => console.log('Connected to MongoDB'))
