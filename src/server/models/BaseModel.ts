@@ -1,23 +1,17 @@
 
-import { Pool } from 'pg';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import mongoose from 'mongoose';
 
 export class BaseModel {
-  protected static pool: Pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false
+  static async connect() {
+    if (!process.env.MONGODB_URL) {
+      throw new Error('MONGODB_URL environment variable is not set');
     }
-  });
-
-  protected static async query(text: string, params?: any[]) {
+    
     try {
-      const result = await this.pool.query(text, params);
-      return result;
+      await mongoose.connect(process.env.MONGODB_URL);
+      console.log('Connected to MongoDB successfully');
     } catch (error) {
-      console.error('Database query error:', error);
+      console.error('MongoDB connection error:', error);
       throw error;
     }
   }

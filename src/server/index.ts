@@ -11,21 +11,18 @@ const app = express();
 const port = process.env.PORT || 5000;
 const mongoUrl = process.env.MONGODB_URL;
 
-// Connect to MongoDB
-import { User } from './models/User';
+if (!mongoUrl) {
+  console.error('MONGODB_URL environment variable is not set');
+  process.exit(1);
+}
 
-// Test database connection and initialize tables
-User.pool.connect()
-  .then(client => {
-    console.log('Successfully connected to PostgreSQL database');
-    client.release();
-    return User.createTable();
-  })
+// Connect to MongoDB
+mongoose.connect(mongoUrl)
   .then(() => {
-    console.log('Database tables initialized successfully');
+    console.log('Successfully connected to MongoDB');
   })
   .catch((error) => {
-    console.error('Database connection/initialization error:', error);
+    console.error('MongoDB connection error:', error);
     process.exit(1);
   });
 
