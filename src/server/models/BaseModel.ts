@@ -1,17 +1,24 @@
 
-import mongoose from 'mongoose';
+import { Pool } from 'pg';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 export class BaseModel {
-  protected static async connect() {
-    const mongoUrl = process.env.MONGODB_URL || 'mongodb://localhost:27017/medical-db';
+  protected static pool: Pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false
+    }
+  });
+
+  protected static async query(text: string, params?: any[]) {
     try {
-      await mongoose.connect(mongoUrl);
-      console.log('Connected to MongoDB');
+      const result = await this.pool.query(text, params);
+      return result;
     } catch (error) {
-      console.error('MongoDB connection error:', error);
+      console.error('Database query error:', error);
+      throw error;
     }
   }
 }

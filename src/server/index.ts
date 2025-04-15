@@ -12,12 +12,15 @@ const port = process.env.PORT || 5000;
 const mongoUrl = process.env.MONGODB_URL;
 
 // Connect to MongoDB
-mongoose.connect(mongoUrl)
+import { User } from './models/User';
+
+// Initialize database tables
+User.createTable()
   .then(() => {
-    console.log('Successfully connected to MongoDB');
+    console.log('Database tables initialized');
   })
   .catch((error) => {
-    console.error('MongoDB connection error:', error);
+    console.error('Database initialization error:', error);
     process.exit(1);
   });
 
