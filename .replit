@@ -21,7 +21,16 @@ args = "npm install"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run dev & node src/server/index.js"
+args = "npm run dev"
+
+[[workflows.workflow]]
+name = "backend"
+author = 41550593
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node src/server/index.js"
 
 [[ports]]
 localPort = 4173
@@ -30,3 +39,7 @@ externalPort = 80
 [[ports]]
 localPort = 4174
 externalPort = 3000
+
+[[ports]]
+localPort = 8080
+externalPort = 8080
