@@ -30,11 +30,11 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run build"
+args = "npx tsc src/server/index.ts --outDir dist/server --esModuleInterop true"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node src/server/index.js"
+args = "node dist/server/index.js"
 
 [[ports]]
 localPort = 4173
