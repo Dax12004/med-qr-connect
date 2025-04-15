@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -72,9 +73,11 @@ const icons = {
       <line x1="21" x2="9" y1="12" y2="12" />
     </svg>
 };
+
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
+
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children
 }) => {
@@ -85,6 +88,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  
   const handleLogout = () => {
     logout();
     navigate("/");
@@ -149,13 +153,20 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     }
     return [];
   };
+  
   const navLinks = getNavLinks();
-  return <div className="min-h-screen flex flex-col bg-gray-50">
+  
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Top Navbar */}
       <header className="bg-white shadow-sm z-10">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center">
-            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="mr-4 text-gray-500 hover:text-medical-primary">
+            <button 
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
+              className="mr-4 text-gray-500 hover:text-medical-primary"
+              aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+            >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
@@ -186,19 +197,36 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       </header>
 
       {/* Sidebar and Main Content */}
-      <div className="flex flex-grow">
+      <div className="flex flex-grow relative">
         {/* Sidebar */}
-        <aside className={`bg-white shadow-md transition-all duration-300 ${isSidebarOpen ? "w-64" : "w-0 -ml-64"}`}>
-          <nav className="pt-6 px-4 h-full">
+        <aside 
+          className={`fixed top-[65px] h-[calc(100vh-65px)] bg-white shadow-md z-10 transition-all duration-300 ease-in-out ${
+            isSidebarOpen ? "w-64 left-0" : "w-64 -left-64"
+          }`}
+        >
+          <nav className="pt-6 px-4 h-full flex flex-col justify-between">
             <div className="space-y-1">
-              {navLinks.map(link => <Link key={link.path} to={link.path} className={`flex items-center py-3 px-4 rounded-md transition-colors ${location.pathname === link.path ? "bg-medical-light text-medical-primary" : "text-gray-600 hover:bg-gray-100"}`}>
+              {navLinks.map(link => (
+                <Link 
+                  key={link.path} 
+                  to={link.path} 
+                  className={`flex items-center py-3 px-4 rounded-md transition-colors ${
+                    location.pathname === link.path 
+                      ? "bg-medical-light text-medical-primary" 
+                      : "text-gray-600 hover:bg-gray-100"
+                  }`}
+                >
                   <span className="mr-3">{link.icon}</span>
                   <span>{link.name}</span>
-                </Link>)}
+                </Link>
+              ))}
             </div>
 
-            <div className="absolute bottom-0 left-0 right-0 p-4">
-              <button onClick={handleLogout} className="flex items-center w-full py-3 rounded-md text-gray-600 hover:bg-gray-100 transition-colors px-[16px]">
+            <div className="mb-4 p-4">
+              <button 
+                onClick={handleLogout} 
+                className="flex items-center w-full py-3 rounded-md text-gray-600 hover:bg-gray-100 transition-colors px-[16px]"
+              >
                 <span className="mr-3">{icons.logout}</span>
                 <span>Logout</span>
               </button>
@@ -207,10 +235,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </aside>
 
         {/* Main Content */}
-        <main className="flex-grow p-8">
+        <main className={`flex-grow p-8 transition-all duration-300 ${
+          isSidebarOpen ? "ml-64" : "ml-0"
+        }`}>
           {children}
         </main>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default DashboardLayout;
