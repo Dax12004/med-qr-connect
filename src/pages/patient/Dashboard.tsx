@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
@@ -13,16 +12,13 @@ const PatientDashboard = () => {
   const { user } = useAuth();
   const { records, appointments, getPatientRecords, getPatientAppointments } = useMedicalRecord();
   
-  // Get patient-specific data
   const patientRecords = user ? getPatientRecords(user.id) : [];
   const patientAppointments = user ? getPatientAppointments(user.id) : [];
   
-  // Filter for upcoming appointments
   const upcomingAppointments = patientAppointments.filter(
     (appointment) => appointment.status === "scheduled"
   ).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-  // Create patient QR data
   const patientQrData = user ? JSON.stringify({
     id: user.id,
     name: user.name,
@@ -35,7 +31,6 @@ const PatientDashboard = () => {
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        {/* Welcome Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-medical-dark">
@@ -61,9 +56,7 @@ const PatientDashboard = () => {
           </div>
         </div>
 
-        {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - QR Code */}
           <div className="lg:col-span-1">
             <QRCodeCard
               data={patientQrData}
@@ -117,9 +110,7 @@ const PatientDashboard = () => {
             </div>
           </div>
 
-          {/* Right Column - Records & Appointments */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Recent Medical Records */}
             <div>
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-medical-dark">Recent Medical Records</h3>
@@ -141,6 +132,7 @@ const PatientDashboard = () => {
                         <Link
                           to={`/patient/records/${record.id}`}
                           className="p-2 text-gray-500 hover:text-medical-primary rounded-full hover:bg-gray-100"
+                          title="View record details"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
@@ -164,7 +156,6 @@ const PatientDashboard = () => {
               </div>
             </div>
 
-            {/* Upcoming Appointments */}
             <div>
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-medical-dark">Upcoming Appointments</h3>
