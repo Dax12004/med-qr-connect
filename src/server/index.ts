@@ -9,6 +9,7 @@ dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
+const host = '0.0.0.0';
 const mongoUrl = process.env.MONGODB_URL;
 
 // Enable CORS and JSON parsing
@@ -46,6 +47,6 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
-app.listen(port, '0.0.0.0', () => {
-  console.log(`Server running on port ${port}`);
+app.listen(port, host, () => {
+  console.log(`Server running on http://${host}:${port}`);
 });
