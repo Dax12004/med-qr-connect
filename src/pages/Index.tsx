@@ -140,7 +140,7 @@ const Index = () => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Patients */}
-              <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-100">
                 <div className="flex items-center mb-4">
                   <div className="bg-medical-light p-3 rounded-full mr-4">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-medical-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -174,14 +174,14 @@ const Index = () => {
                 
                 <Link
                   to="/register?role=patient"
-                  className="inline-block px-5 py-2 rounded-md bg-medical-patient text-white font-medium hover:opacity-90 transition-opacity"
+                  className="inline-block w-full text-center px-5 py-3 rounded-md bg-medical-primary text-white font-medium hover:bg-medical-secondary transition-colors duration-300 shadow-sm hover:shadow-md"
                 >
                   Register as a Patient
                 </Link>
               </div>
               
               {/* Doctors */}
-              <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-gray-100">
                 <div className="flex items-center mb-4">
                   <div className="bg-medical-light p-3 rounded-full mr-4">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-medical-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -218,7 +218,7 @@ const Index = () => {
                 
                 <Link
                   to="/register?role=doctor"
-                  className="inline-block px-5 py-2 rounded-md bg-medical-doctor text-white font-medium hover:opacity-90 transition-opacity"
+                  className="inline-block w-full text-center px-5 py-3 rounded-md bg-medical-primary text-white font-medium hover:bg-medical-secondary transition-colors duration-300 shadow-sm hover:shadow-md"
                 >
                   Register as a Doctor
                 </Link>
