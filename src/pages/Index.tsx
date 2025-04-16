@@ -44,16 +44,16 @@ const Index = () => {
               Go to Dashboard
             </Link>
           ) : (
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-4 sm:px-0">
               <Link
                 to="/register"
-                className="w-full sm:w-auto px-6 py-3 rounded-md bg-medical-primary text-white font-medium hover:bg-medical-secondary transition-colors"
+                className="w-full sm:w-auto px-6 py-3 rounded-md bg-medical-primary text-white font-medium hover:bg-medical-secondary transition-colors text-center"
               >
                 Get Started
               </Link>
               <Link
                 to="/login"
-                className="w-full sm:w-auto px-6 py-3 rounded-md border border-medical-primary text-medical-primary font-medium hover:bg-medical-light transition-colors"
+                className="w-full sm:w-auto px-6 py-3 rounded-md border border-medical-primary text-medical-primary font-medium hover:bg-medical-light transition-colors text-center"
               >
                 Sign In
               </Link>

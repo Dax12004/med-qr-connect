@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,7 +13,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  
+  const [isNavbarVisible, setIsNavbarVisible] = useState(true); // Added state for navbar visibility
+
   const handleLogout = () => {
     logout();
     navigate("/");
@@ -47,13 +47,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     }
     return [];
   };
-  
+
   const navLinks = getNavLinks();
-  
+
   return (
     <div className="min-h-screen flex flex-col bg-medical-light">
       {/* Top Navbar */}
-      <header className="bg-white shadow-sm z-10 fixed top-0 left-0 right-0">
+      <header className={`bg-white shadow-sm z-10 fixed top-0 left-0 right-0 transition-transform duration-300 ${
+        isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
+      }`}>
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center">
             <button 
