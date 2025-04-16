@@ -1,12 +1,22 @@
-import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema({
-  username: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  role: { type: String, required: true }
-}, {
-  timestamps: true
-});
+import { pool } from '../index';
 
-export const User = mongoose.model('User', userSchema);
+export class User {
+  static async findById(id: string) {
+    const result = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
+    return result.rows[0];
+  }
+
+  static async find(query = {}) {
+    const result = await pool.query('SELECT * FROM users');
+    return result.rows;
+  }
+
+  static async create(user: { username: string; email: string; password: string; role: string }) {
+    const result = await pool.query(
+      'INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4) RETURNING *',
+      [user.username, user.email, user.password, user.role]
+    );
+    return result.rows[0];
+  }
+}

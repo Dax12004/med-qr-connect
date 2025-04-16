@@ -1,9 +1,20 @@
+
 import React, { createContext, useContext, useState } from 'react';
-import { User, MedicalRecord, Appointment, QrScanLog } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
+import { User, MedicalRecord, Appointment, QrScanLog } from '@/types';
 
 // Re-export types used by other components
 export type { MedicalRecord, Appointment, QrScanLog };
+
+// Fallback function to generate IDs if uuid fails to load
+const generateId = () => {
+  try {
+    return uuidv4();
+  } catch (error) {
+    console.error('Failed to generate UUID, using timestamp-based ID instead', error);
+    return `id-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+  }
+};
 
 interface MedicalRecordContextType {
   records: MedicalRecord[];
@@ -68,7 +79,7 @@ export const MedicalRecordProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const addRecord = async (recordData: Omit<MedicalRecord, 'id'>): Promise<MedicalRecord> => {
     const newRecord: MedicalRecord = {
-      id: uuidv4(),
+      id: generateId(),
       ...recordData
     };
     setRecords(prev => [...prev, newRecord]);
@@ -98,7 +109,7 @@ export const MedicalRecordProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const addAppointment = async (appointmentData: Omit<Appointment, 'id'>): Promise<Appointment> => {
     const newAppointment: Appointment = {
-      id: uuidv4(),
+      id: generateId(),
       ...appointmentData
     };
     setAppointments(prev => [...prev, newAppointment]);
@@ -138,7 +149,7 @@ export const MedicalRecordProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const addQrScanLog = async (logData: Omit<QrScanLog, 'id'>): Promise<QrScanLog> => {
     const newLog: QrScanLog = {
-      id: uuidv4(),
+      id: generateId(),
       ...logData
     };
     setQrLogs(prev => [...prev, newLog]);
