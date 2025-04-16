@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,46 +6,46 @@
 @layer base {
   :root {
     /* Base colors for UI */
-    --background: 199 100% 97%;
-    --foreground: 197 90% 10%;
+    --background: 60 36% 96%;
+    --foreground: 20 4% 28%;
 
     --card: 0 0% 100%;
-    --card-foreground: 197 90% 10%;
+    --card-foreground: 20 4% 28%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 197 90% 10%;
+    --popover-foreground: 20 4% 28%;
 
-    /* Primary: Medical Teal */
-    --primary: 187 85% 36%;
+    /* Primary: Brown */
+    --primary: 20 33% 45%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary: Lighter Teal */
-    --secondary: 187 65% 40%;
-    --secondary-foreground: 0 0% 100%;
+    /* Secondary: Beige */
+    --secondary: 38 18% 84%;
+    --secondary-foreground: 20 4% 28%;
 
-    --muted: 199 33% 95%;
-    --muted-foreground: 199 20% 45%;
+    --muted: 60 36% 96%;
+    --muted-foreground: 20 4% 55%;
 
-    --accent: 187 100% 42%;
+    --accent: 20 33% 45%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 195 30% 90%;
-    --input: 195 30% 90%;
-    --ring: 187 85% 36%;
+    --border: 38 18% 84%;
+    --input: 38 18% 84%;
+    --ring: 20 33% 45%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 197 90% 15%;
-    --sidebar-primary: 187 85% 36%;
+    --sidebar-background: 60 40% 97%;
+    --sidebar-foreground: 20 4% 28%;
+    --sidebar-primary: 20 33% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 187 100% 95%;
-    --sidebar-accent-foreground: 197 90% 15%;
-    --sidebar-border: 195 30% 90%;
-    --sidebar-ring: 187 85% 36%;
+    --sidebar-accent: 38 18% 84%;
+    --sidebar-accent-foreground: 20 4% 28%;
+    --sidebar-border: 38 18% 84%;
+    --sidebar-ring: 20 33% 45%;
   }
 
   .dark {
@@ -92,6 +93,6 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-medical-light text-foreground;
   }
 }

@@ -1,24 +1,73 @@
+
 import React, { createContext, useContext, useState } from 'react';
-import { User, MedicalRecord, Appointment, QrScanLog } from '@/types'; // Adjust import path as needed
+import { v4 as uuidv4 } from 'uuid';
+import { User, MedicalRecord, Appointment, QrScanLog } from '@/types';
+
+// Re-export types used by other components
+export type { MedicalRecord, Appointment, QrScanLog };
+
+// Fallback function to generate IDs if uuid fails to load
+const generateId = () => {
+  try {
+    return uuidv4();
+  } catch (error) {
+    console.error('Failed to generate UUID, using timestamp-based ID instead', error);
+    return `id-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+  }
+};
 
 interface MedicalRecordContextType {
   records: MedicalRecord[];
   appointments: Appointment[];
   qrLogs: QrScanLog[];
+  addRecord: (record: Omit<MedicalRecord, 'id'>) => Promise<MedicalRecord>;
+  updateRecord: (id: string, updates: Partial<MedicalRecord>) => Promise<MedicalRecord>;
+  deleteRecord: (id: string) => Promise<void>;
+  addAppointment: (appointment: Omit<Appointment, 'id'>) => Promise<Appointment>;
+  updateAppointment: (id: string, updates: Partial<Appointment>) => Promise<Appointment>;
+  deleteAppointment: (id: string) => Promise<void>;
   getPatientRecords: (patientId: string) => MedicalRecord[];
   getPatientAppointments: (patientId: string) => Appointment[];
   getDoctorAppointments: (doctorId: string) => Appointment[];
   getDoctorPatients: (doctorId: string) => User[];
+  addQrScanLog: (log: Omit<QrScanLog, 'id'>) => Promise<QrScanLog>;
 }
 
 const MedicalRecordContext = createContext<MedicalRecordContextType>({
   records: [],
   appointments: [],
   qrLogs: [],
+  addRecord: async () => ({ id: '', patientId: '', title: '', type: 'other', date: '', description: '' }),
+  updateRecord: async () => ({ id: '', patientId: '', title: '', type: 'other', date: '', description: '' }),
+  deleteRecord: async () => {},
+  addAppointment: async () => ({ 
+    id: '', 
+    patientId: '', 
+    patientName: '', 
+    doctorId: '', 
+    doctorName: '', 
+    date: '', 
+    time: '', 
+    status: 'scheduled', 
+    purpose: '' 
+  }),
+  updateAppointment: async () => ({ 
+    id: '', 
+    patientId: '', 
+    patientName: '', 
+    doctorId: '', 
+    doctorName: '', 
+    date: '', 
+    time: '', 
+    status: 'scheduled', 
+    purpose: '' 
+  }),
+  deleteAppointment: async () => {},
   getPatientRecords: () => [],
   getPatientAppointments: () => [],
   getDoctorAppointments: () => [],
   getDoctorPatients: () => [],
+  addQrScanLog: async () => ({ id: '', recordId: '', scannedBy: '', scannedAt: '', ipAddress: '' }),
 });
 
 export const useMedicalRecord = () => useContext(MedicalRecordContext);
@@ -27,6 +76,85 @@ export const MedicalRecordProvider: React.FC<{ children: React.ReactNode }> = ({
   const [records, setRecords] = useState<MedicalRecord[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [qrLogs, setQrLogs] = useState<QrScanLog[]>([]);
+
+  const addRecord = async (recordData: Omit<MedicalRecord, 'id'>): Promise<MedicalRecord> => {
+    const newRecord: MedicalRecord = {
+      id: generateId(),
+      ...recordData
+    };
+    setRecords(prev => [...prev, newRecord]);
+    return newRecord;
+  };
+
+  const updateRecord = async (id: string, updates: Partial<MedicalRecord>): Promise<MedicalRecord> => {
+    let updatedRecord: MedicalRecord = { id: '', patientId: '', title: '', type: 'other', date: '', description: '' };
+    
+    setRecords(prev => {
+      const updated = prev.map(record => {
+        if (record.id === id) {
+          updatedRecord = { ...record, ...updates };
+          return updatedRecord;
+        }
+        return record;
+      });
+      return updated;
+    });
+    
+    return updatedRecord;
+  };
+
+  const deleteRecord = async (id: string): Promise<void> => {
+    setRecords(prev => prev.filter(record => record.id !== id));
+  };
+
+  const addAppointment = async (appointmentData: Omit<Appointment, 'id'>): Promise<Appointment> => {
+    const newAppointment: Appointment = {
+      id: generateId(),
+      ...appointmentData
+    };
+    setAppointments(prev => [...prev, newAppointment]);
+    return newAppointment;
+  };
+
+  const updateAppointment = async (id: string, updates: Partial<Appointment>): Promise<Appointment> => {
+    let updatedAppointment: Appointment = { 
+      id: '', 
+      patientId: '', 
+      patientName: '', 
+      doctorId: '', 
+      doctorName: '', 
+      date: '', 
+      time: '', 
+      status: 'scheduled', 
+      purpose: '' 
+    };
+    
+    setAppointments(prev => {
+      const updated = prev.map(appointment => {
+        if (appointment.id === id) {
+          updatedAppointment = { ...appointment, ...updates };
+          return updatedAppointment;
+        }
+        return appointment;
+      });
+      return updated;
+    });
+    
+    return updatedAppointment;
+  };
+
+  const deleteAppointment = async (id: string): Promise<void> => {
+    setAppointments(prev => prev.filter(appointment => appointment.id !== id));
+  };
+
+  const addQrScanLog = async (logData: Omit<QrScanLog, 'id'>): Promise<QrScanLog> => {
+    const newLog: QrScanLog = {
+      id: generateId(),
+      ...logData
+    };
+    setQrLogs(prev => [...prev, newLog]);
+    return newLog;
+  };
 
   const getPatientRecords = (patientId: string) => {
     return records.filter(record => record.patientId === patientId);
@@ -40,10 +168,15 @@ export const MedicalRecordProvider: React.FC<{ children: React.ReactNode }> = ({
     return appointments.filter(appointment => appointment.doctorId === doctorId);
   };
 
-  const getDoctorPatients = (doctorId: string) => {
+  const getDoctorPatients = (doctorId: string): User[] => {
     const doctorAppointments = getDoctorAppointments(doctorId);
     const patientIds = [...new Set(doctorAppointments.map(app => app.patientId))];
-    return patientIds.map(id => ({ id, name: '', email: '', role: 'patient' }));
+    return patientIds.map(id => ({ 
+      id, 
+      name: '', 
+      email: '', 
+      role: 'patient' as const 
+    }));
   };
 
   return (
@@ -52,10 +185,17 @@ export const MedicalRecordProvider: React.FC<{ children: React.ReactNode }> = ({
         records,
         appointments,
         qrLogs,
+        addRecord,
+        updateRecord,
+        deleteRecord,
+        addAppointment,
+        updateAppointment,
+        deleteAppointment,
         getPatientRecords,
         getPatientAppointments,
         getDoctorAppointments,
         getDoctorPatients,
+        addQrScanLog,
       }}
     >
       {children}

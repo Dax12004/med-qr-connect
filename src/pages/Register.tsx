@@ -4,35 +4,57 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth, UserRole } from "@/contexts/AuthContext";
 import MainLayout from "@/components/layout/MainLayout";
 
+// Options for blood group dropdown
+const bloodGroupOptions = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+
+// Options for relation dropdown
+const relationOptions = [
+  "Parent", "Child", "Sibling", "Spouse", "Friend", "Other Family", "Guardian", "Caregiver"
+];
+
 const Register = () => {
   const [searchParams] = useSearchParams();
   const initialRole = searchParams.get("role") as UserRole || "patient";
 
   const [formData, setFormData] = useState({
+    // Common Fields
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
     role: initialRole,
+    phoneNumber: "",
+    gender: "",
+    dateOfBirth: "",
+    
     // Patient-specific fields
     height: "",
     weight: "",
     bloodGroup: "",
     emergencyContact: "",
     emergencyPhone: "",
+    relationWithPatient: "",
+    address: "",
+    insurancePolicy: "",
+    
     // Doctor-specific fields
     specialization: "",
-    degree: "",
     licenseNumber: "",
     experience: "",
+    affiliation: "",
+    education: "",
+    availableDays: "",
+    clinicAddress: "",
+    appointmentContact: "",
   });
+  
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -76,6 +98,9 @@ const Register = () => {
         email: formData.email,
         password: formData.password,
         role: formData.role,
+        phoneNumber: formData.phoneNumber,
+        gender: formData.gender,
+        dateOfBirth: formData.dateOfBirth
       };
 
       // Add role-specific data
@@ -87,6 +112,9 @@ const Register = () => {
             bloodGroup: formData.bloodGroup,
             emergencyContact: formData.emergencyContact,
             emergencyPhone: formData.emergencyPhone,
+            relationWithPatient: formData.relationWithPatient,
+            address: formData.address,
+            insurancePolicy: formData.insurancePolicy,
             allergies: [],
           },
         });
@@ -94,9 +122,13 @@ const Register = () => {
         Object.assign(userData, {
           doctorData: {
             specialization: formData.specialization,
-            degree: formData.degree,
             licenseNumber: formData.licenseNumber,
             experience: formData.experience ? parseInt(formData.experience, 10) : 0,
+            affiliation: formData.affiliation,
+            education: formData.education,
+            availableDays: formData.availableDays,
+            clinicAddress: formData.clinicAddress,
+            appointmentContact: formData.appointmentContact,
           },
         });
       }
@@ -133,94 +165,147 @@ const Register = () => {
           
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic information - common for all roles */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name
-                </label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
-                  placeholder="Enter your full name"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                  Email Address
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
-                  placeholder="Enter your email"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
-                  placeholder="Create a password"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                  Confirm Password
-                </label>
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
-                  placeholder="Confirm your password"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
-                  Role
-                </label>
-                <select
-                  id="role"
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
-                  required
-                >
-                  <option value="patient">Patient</option>
-                  <option value="doctor">Doctor</option>
-                </select>
+            <div>
+              <h3 className="text-lg font-medium text-medical-dark mb-4">Basic Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                    Full Name*
+                  </label>
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
+                    placeholder="Enter your full name"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                    Email Address*
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                    Password*
+                  </label>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
+                    placeholder="Create a password"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                    Confirm Password*
+                  </label>
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
+                    placeholder="Confirm your password"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                    Phone Number*
+                  </label>
+                  <input
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    type="tel"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
+                    placeholder="Enter your phone number"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">
+                    Gender*
+                  </label>
+                  <select
+                    id="gender"
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
+                    required
+                  >
+                    <option value="">Select gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                
+                <div>
+                  <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700 mb-1">
+                    Date of Birth*
+                  </label>
+                  <input
+                    id="dateOfBirth"
+                    name="dateOfBirth"
+                    type="date"
+                    value={formData.dateOfBirth}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
+                    Role*
+                  </label>
+                  <select
+                    id="role"
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
+                    required
+                  >
+                    <option value="patient">Patient</option>
+                    <option value="doctor">Doctor</option>
+                  </select>
+                </div>
               </div>
             </div>
             
             {/* Patient-specific fields */}
             {formData.role === "patient" && (
-              <div className="pt-4 border-t border-gray-200">
+              <div>
                 <h3 className="text-lg font-medium text-medical-dark mb-4">Patient Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label htmlFor="height" className="block text-sm font-medium text-gray-700 mb-1">
                       Height (cm)
@@ -255,17 +340,53 @@ const Register = () => {
                     <label htmlFor="bloodGroup" className="block text-sm font-medium text-gray-700 mb-1">
                       Blood Group
                     </label>
-                    <input
+                    <select
                       id="bloodGroup"
                       name="bloodGroup"
-                      type="text"
                       value={formData.bloodGroup}
                       onChange={handleChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
-                      placeholder="e.g., A+"
+                    >
+                      <option value="">Select blood group</option>
+                      {bloodGroupOptions.map(group => (
+                        <option key={group} value={group}>{group}</option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div className="md:col-span-3">
+                    <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                      Address
+                    </label>
+                    <textarea
+                      id="address"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      rows={3}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
+                      placeholder="Enter your full address"
                     />
                   </div>
                   
+                  <div className="md:col-span-3">
+                    <label htmlFor="insurancePolicy" className="block text-sm font-medium text-gray-700 mb-1">
+                      Insurance Policy Number / Provider
+                    </label>
+                    <input
+                      id="insurancePolicy"
+                      name="insurancePolicy"
+                      type="text"
+                      value={formData.insurancePolicy}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
+                      placeholder="e.g., ABC123456 / XYZ Insurance"
+                    />
+                  </div>
+                </div>
+                
+                <h3 className="text-lg font-medium text-medical-dark my-4">Emergency Contact Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label htmlFor="emergencyContact" className="block text-sm font-medium text-gray-700 mb-1">
                       Emergency Contact Name*
@@ -297,15 +418,33 @@ const Register = () => {
                       required
                     />
                   </div>
+                  
+                  <div>
+                    <label htmlFor="relationWithPatient" className="block text-sm font-medium text-gray-700 mb-1">
+                      Relation with Patient
+                    </label>
+                    <select
+                      id="relationWithPatient"
+                      name="relationWithPatient"
+                      value={formData.relationWithPatient}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
+                    >
+                      <option value="">Select relation</option>
+                      {relationOptions.map(relation => (
+                        <option key={relation} value={relation}>{relation}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </div>
             )}
             
             {/* Doctor-specific fields */}
             {formData.role === "doctor" && (
-              <div className="pt-4 border-t border-gray-200">
-                <h3 className="text-lg font-medium text-medical-dark mb-4">Doctor Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-lg font-medium text-medical-dark mb-4">Professional Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="specialization" className="block text-sm font-medium text-gray-700 mb-1">
                       Specialization*
@@ -323,23 +462,8 @@ const Register = () => {
                   </div>
                   
                   <div>
-                    <label htmlFor="degree" className="block text-sm font-medium text-gray-700 mb-1">
-                      Degree
-                    </label>
-                    <input
-                      id="degree"
-                      name="degree"
-                      type="text"
-                      value={formData.degree}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
-                      placeholder="e.g., MD"
-                    />
-                  </div>
-                  
-                  <div>
                     <label htmlFor="licenseNumber" className="block text-sm font-medium text-gray-700 mb-1">
-                      License Number*
+                      Medical License Number*
                     </label>
                     <input
                       id="licenseNumber"
@@ -350,6 +474,21 @@ const Register = () => {
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
                       placeholder="Your medical license number"
                       required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="education" className="block text-sm font-medium text-gray-700 mb-1">
+                      Education
+                    </label>
+                    <input
+                      id="education"
+                      name="education"
+                      type="text"
+                      value={formData.education}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
+                      placeholder="e.g., MBBS, MD"
                     />
                   </div>
                   
@@ -369,6 +508,66 @@ const Register = () => {
                       placeholder="e.g., 10"
                     />
                   </div>
+                  
+                  <div>
+                    <label htmlFor="affiliation" className="block text-sm font-medium text-gray-700 mb-1">
+                      Affiliated Hospital/Clinic
+                    </label>
+                    <input
+                      id="affiliation"
+                      name="affiliation"
+                      type="text"
+                      value={formData.affiliation}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
+                      placeholder="e.g., City General Hospital"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="availableDays" className="block text-sm font-medium text-gray-700 mb-1">
+                      Available Days/Time
+                    </label>
+                    <input
+                      id="availableDays"
+                      name="availableDays"
+                      type="text"
+                      value={formData.availableDays}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
+                      placeholder="e.g., Mon-Fri, 9AM-5PM"
+                    />
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label htmlFor="clinicAddress" className="block text-sm font-medium text-gray-700 mb-1">
+                      Clinic Address
+                    </label>
+                    <textarea
+                      id="clinicAddress"
+                      name="clinicAddress"
+                      value={formData.clinicAddress}
+                      onChange={handleChange}
+                      rows={3}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
+                      placeholder="Enter your clinic address"
+                    />
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label htmlFor="appointmentContact" className="block text-sm font-medium text-gray-700 mb-1">
+                      Contact for Appointments
+                    </label>
+                    <input
+                      id="appointmentContact"
+                      name="appointmentContact"
+                      type="text"
+                      value={formData.appointmentContact}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-medical-primary focus:border-medical-primary"
+                      placeholder="e.g., Phone or email for appointments"
+                    />
+                  </div>
                 </div>
               </div>
             )}
@@ -376,7 +575,7 @@ const Register = () => {
             <div className="pt-4">
               <button
                 type="submit"
-                className="w-full bg-medical-primary text-white py-2 px-4 rounded-md hover:bg-medical-secondary transition-colors focus:outline-none focus:ring-2 focus:ring-medical-primary focus:ring-offset-2 disabled:opacity-50"
+                className="w-full bg-medical-primary text-white py-2 px-4 rounded-md hover:bg-medical-brown/80 transition-colors focus:outline-none focus:ring-2 focus:ring-medical-primary focus:ring-offset-2 disabled:opacity-50"
                 disabled={isLoading}
               >
                 {isLoading ? "Creating Account..." : "Register"}
@@ -387,7 +586,7 @@ const Register = () => {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{" "}
-              <Link to="/login" className="text-medical-primary hover:text-medical-secondary">
+              <Link to="/login" className="text-medical-primary hover:text-medical-brown/80">
                 Sign in here
               </Link>
             </p>

@@ -18,8 +18,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
   return (
     <div className="min-h-screen flex flex-col bg-medical-light">
-      {/* Navbar */}
-      <header className="bg-white shadow-sm">
+      {/* Navbar - Fixed */}
+      <header className="bg-white shadow-sm fixed top-0 left-0 right-0 z-10">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div>
             <Link to="/" className="flex items-center space-x-2">
@@ -76,13 +76,13 @@ const MainLayout = ({ children }: MainLayoutProps) => {
               <div className="flex items-center space-x-4">
                 <div className="text-right">
                   <p className="text-sm text-medical-dark">
-                    {user?.role === "doctor" ? "Dr. " : ""}{user?.name}
+                    Welcome, {user?.role === "doctor" ? "Dr. " : ""}{user?.name}
                   </p>
                   <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="px-4 py-2 rounded bg-medical-primary text-white hover:bg-medical-secondary transition-colors"
+                  className="px-4 py-2 rounded bg-medical-primary text-white hover:bg-medical-brown/80 transition-colors"
                 >
                   Sign out
                 </button>
@@ -97,7 +97,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 </Link>
                 <Link
                   to="/register"
-                  className="px-4 py-2 rounded bg-medical-primary text-white hover:bg-medical-secondary transition-colors"
+                  className="px-4 py-2 rounded bg-medical-primary text-white hover:bg-medical-brown/80 transition-colors"
                 >
                   Get Started
                 </Link>
@@ -107,8 +107,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="flex-grow container mx-auto px-4 py-8">
+      {/* Main content - with padding for fixed header */}
+      <main className="flex-grow container mx-auto px-4 py-8 pt-[76px]">
         {children}
       </main>
 
