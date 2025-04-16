@@ -1,6 +1,7 @@
+
 import React, { createContext, useContext, useState } from 'react';
-import { User, MedicalRecord, Appointment, QrScanLog } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
+import { User, MedicalRecord, Appointment, QrScanLog } from '@/types';
 
 // Re-export types used by other components
 export type { MedicalRecord, Appointment, QrScanLog };
