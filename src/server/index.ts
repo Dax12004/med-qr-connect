@@ -1,10 +1,9 @@
-
 import express from 'express';
 import cors from 'cors';
-import { Pool } from 'pg';
 import userRoutes from './routes/userRoutes';
 import dotenv from 'dotenv';
 import { dirname, join } from 'path';
+import { BaseModel } from './models/BaseModel';
 
 dotenv.config();
 
@@ -16,24 +15,13 @@ const host = '0.0.0.0';
 app.use(cors());
 app.use(express.json());
 
-// Create PostgreSQL connection pool
-export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  },
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-});
-
-// Test database connection
-pool.connect()
+// Connect to MongoDB
+BaseModel.connect()
   .then(() => {
-    console.log('Successfully connected to PostgreSQL');
+    console.log('Successfully connected to MongoDB');
   })
   .catch((error) => {
-    console.error('PostgreSQL connection error:', error);
+    console.error('MongoDB connection error:', error);
     process.exit(1);
   });
 
@@ -45,8 +33,7 @@ app.use('/api/users', userRoutes);
 // Test endpoint to check database connection
 app.get('/api/health', async (req, res) => {
   try {
-    const result = await pool.query('SELECT NOW()');
-    res.json({ status: 'Database connected successfully', timestamp: result.rows[0].now });
+    res.json({ status: 'Database connected successfully', timestamp: new Date() });
   } catch (error) {
     console.error('Database connection error:', error);
     res.status(500).json({ status: 'Database connection failed', error: error.message });
