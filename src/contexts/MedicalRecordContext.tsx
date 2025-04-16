@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState } from 'react';
 import { User, MedicalRecord, Appointment, QrScanLog } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -67,7 +66,6 @@ export const MedicalRecordProvider: React.FC<{ children: React.ReactNode }> = ({
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [qrLogs, setQrLogs] = useState<QrScanLog[]>([]);
 
-  // Record management functions
   const addRecord = async (recordData: Omit<MedicalRecord, 'id'>): Promise<MedicalRecord> => {
     const newRecord: MedicalRecord = {
       id: uuidv4(),
@@ -98,7 +96,6 @@ export const MedicalRecordProvider: React.FC<{ children: React.ReactNode }> = ({
     setRecords(prev => prev.filter(record => record.id !== id));
   };
 
-  // Appointment management functions
   const addAppointment = async (appointmentData: Omit<Appointment, 'id'>): Promise<Appointment> => {
     const newAppointment: Appointment = {
       id: uuidv4(),
@@ -139,7 +136,6 @@ export const MedicalRecordProvider: React.FC<{ children: React.ReactNode }> = ({
     setAppointments(prev => prev.filter(appointment => appointment.id !== id));
   };
 
-  // QR scan log functions
   const addQrScanLog = async (logData: Omit<QrScanLog, 'id'>): Promise<QrScanLog> => {
     const newLog: QrScanLog = {
       id: uuidv4(),
@@ -149,7 +145,6 @@ export const MedicalRecordProvider: React.FC<{ children: React.ReactNode }> = ({
     return newLog;
   };
 
-  // Getter functions
   const getPatientRecords = (patientId: string) => {
     return records.filter(record => record.patientId === patientId);
   };
@@ -162,10 +157,15 @@ export const MedicalRecordProvider: React.FC<{ children: React.ReactNode }> = ({
     return appointments.filter(appointment => appointment.doctorId === doctorId);
   };
 
-  const getDoctorPatients = (doctorId: string) => {
+  const getDoctorPatients = (doctorId: string): User[] => {
     const doctorAppointments = getDoctorAppointments(doctorId);
     const patientIds = [...new Set(doctorAppointments.map(app => app.patientId))];
-    return patientIds.map(id => ({ id, name: '', email: '', role: 'patient' }));
+    return patientIds.map(id => ({ 
+      id, 
+      name: '', 
+      email: '', 
+      role: 'patient' as const 
+    }));
   };
 
   return (
