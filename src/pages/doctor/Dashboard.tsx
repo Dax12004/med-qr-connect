@@ -6,9 +6,25 @@ import { useMedicalRecord } from "@/contexts/MedicalRecordContext";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import AppointmentCard from "@/components/ui/AppointmentCard";
 
+import { QrReader } from 'react-qr-reader';
+
 const DoctorDashboard = () => {
   const { user } = useAuth();
   const { appointments, getDoctorAppointments, getDoctorPatients } = useMedicalRecord();
+  const [scanResult, setScanResult] = useState('');
+  const [showScanner, setShowScanner] = useState(false);
+  
+  const handleScan = (result) => {
+    if (result) {
+      try {
+        const data = JSON.parse(result?.text);
+        setScanResult(data);
+        setShowScanner(false);
+      } catch (error) {
+        console.error('Invalid QR code data:', error);
+      }
+    }
+  };
   
   // Get doctor-specific data
   const doctorAppointments = user ? getDoctorAppointments(user.id) : [];
@@ -33,6 +49,35 @@ const DoctorDashboard = () => {
           <p className="text-gray-500 mt-1">
             Manage your patients and appointments
           </p>
+        </div>
+
+        {/* QR Scanner */}
+        <div className="mb-8">
+          <button
+            onClick={() => setShowScanner(!showScanner)}
+            className="px-4 py-2 bg-medical-primary text-white rounded-md hover:bg-medical-secondary"
+          >
+            {showScanner ? 'Close Scanner' : 'Scan QR Code'}
+          </button>
+          
+          {showScanner && (
+            <div className="mt-4 max-w-md">
+              <QrReader
+                onResult={handleScan}
+                constraints={{ facingMode: 'environment' }}
+                className="w-full"
+              />
+            </div>
+          )}
+          
+          {scanResult && (
+            <div className="mt-4 p-4 bg-white rounded-lg shadow-md">
+              <h3 className="text-lg font-semibold mb-2">Scan Result:</h3>
+              <pre className="bg-gray-50 p-2 rounded">
+                {JSON.stringify(scanResult, null, 2)}
+              </pre>
+            </div>
+          )}
         </div>
 
         {/* Quick Stats */}
