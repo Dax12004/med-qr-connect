@@ -20,7 +20,7 @@ export const NavLink: React.FC<NavLinkProps> = ({ to, icon, name, isActive }) =>
       }`}
     >
       <span className="mr-3">{icon}</span>
-      <span>{name}</span>
+      <span className="text-sm font-medium">{name}</span>
     </Link>
   );
 };
