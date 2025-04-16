@@ -26,7 +26,7 @@ args = "npm run dev & node src/server/index.js"
 [[workflows.workflow]]
 name = "backend"
 author = 41550593
-mode = "sequential"
+mode = "parallel"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
@@ -34,7 +34,7 @@ args = "npx tsc src/server/index.ts --outDir dist/server --esModuleInterop true"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node dist/server/index.js"
+args = "npm start"
 
 [[ports]]
 localPort = 4173
