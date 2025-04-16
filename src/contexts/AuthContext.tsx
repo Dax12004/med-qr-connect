@@ -51,16 +51,32 @@ const AuthContext = createContext<AuthContextType>({
 
 // Auth Provider component
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<(User & { patientData?: PatientData; doctorData?: DoctorData }) | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
+  const [user, setUser] = useState<(User & { patientData?: PatientData; doctorData?: DoctorData }) | null>(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
   // Login function
   const login = async (email: string, password: string) => {
     try {
-      // Implement actual login logic here
+      setIsLoading(true);
+      // Mock login for demo - replace with actual API call
+      const mockUser = {
+        id: '1',
+        name: 'Test Patient',
+        email: email,
+        role: 'patient' as UserRole,
+        patientData: {
+          height: '170cm',
+          weight: '70kg'
+        }
+      };
+      setUser(mockUser);
+      localStorage.setItem('user', JSON.stringify(mockUser));
       setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       console.error('Login error:', error);
       throw error;
     }
@@ -80,6 +96,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Logout function
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('user');
   };
 
   return (
