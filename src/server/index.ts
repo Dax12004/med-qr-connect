@@ -42,8 +42,8 @@ app.use('/api/users', userRoutes);
 // Test endpoint to check database connection
 app.get('/api/health', async (req, res) => {
   try {
-    await mongoose.connection.db.admin().ping();
-    res.json({ status: 'Database connected successfully' });
+    const result = await pool.query('SELECT NOW()');
+    res.json({ status: 'Database connected successfully', timestamp: result.rows[0].now });
   } catch (error) {
     console.error('Database connection error:', error);
     res.status(500).json({ status: 'Database connection failed', error: error.message });
