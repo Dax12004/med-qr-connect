@@ -1,17 +1,25 @@
 
-import { pool } from '../index';
+import mongoose from 'mongoose';
+
+const qrScanSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  recordId: { type: String, required: true },
+  scanTime: { type: Date, default: Date.now },
+  location: {
+    latitude: Number,
+    longitude: Number
+  }
+}, { timestamps: true });
+
+const QrScanModel = mongoose.model('QrScan', qrScanSchema);
 
 export class QrScan {
-  static async create(scan: { scanned_by: string; scanned_data: any; ip_address: string }) {
-    const result = await pool.query(
-      'INSERT INTO qr_scans (scanned_by, scanned_data, ip_address) VALUES ($1, $2, $3) RETURNING *',
-      [scan.scanned_by, scan.scanned_data, scan.ip_address]
-    );
-    return result.rows[0];
+  static async create(scanData: { userId: string; recordId: string; location?: { latitude: number; longitude: number } }) {
+    const newScan = new QrScanModel(scanData);
+    return await newScan.save();
   }
 
-  static async findByScannerId(scannerId: string) {
-    const result = await pool.query('SELECT * FROM qr_scans WHERE scanned_by = $1 ORDER BY created_at DESC', [scannerId]);
-    return result.rows;
+  static async findByUserId(userId: string) {
+    return await QrScanModel.find({ userId }).sort({ scanTime: -1 });
   }
 }

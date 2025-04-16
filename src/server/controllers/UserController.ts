@@ -8,6 +8,7 @@ export class UserController {
       const users = await User.find({});
       res.json(users);
     } catch (error) {
+      console.error('Error fetching users:', error);
       res.status(500).json({ message: 'Server error' });
     }
   }
@@ -20,6 +21,7 @@ export class UserController {
       }
       res.json(user);
     } catch (error) {
+      console.error('Error fetching user:', error);
       res.status(500).json({ message: 'Server error' });
     }
   }
@@ -30,6 +32,7 @@ export class UserController {
       const user = await User.create({ username, email, password, role });
       res.status(201).json(user);
     } catch (error) {
+      console.error('Error creating user:', error);
       res.status(500).json({ message: 'Server error' });
     }
   }
