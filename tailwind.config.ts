@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -63,17 +64,17 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				medical: {
-					primary: '#0891B2', // Teal/Cyan for primary medical color
-					secondary: '#0E7490', // Darker teal for secondary actions
-					light: '#E0F2FE', // Light blue for backgrounds
-					dark: '#164E63', // Dark teal for text
-					accent: '#06B6D4', // Bright teal for accents/highlights
-					warning: '#FBBF24', // Amber for warnings
-					error: '#DC2626', // Red for errors
-					success: '#059669', // Green for success
-					patient: '#0EA5E9', // Blue for patient-related items
-					doctor: '#8B5CF6', // Purple for doctor-related items
-					admin: '#64748B', // Slate for admin-related items
+					white: '#FAF7F0',     // White
+					beige: '#D8D2C2',     // Beige
+					brown: '#B17457',     // Brown
+					dark: '#4A4947',      // Dark gray/black
+					primary: '#B17457',   // Using brown as primary
+					secondary: '#D8D2C2', // Using beige as secondary
+					light: '#FAF7F0',     // Using white as light
+					accent: '#4A4947',    // Using dark as accent
+					warning: '#E9B872',   // A complementary warning color
+					error: '#C05F5F',     // A complementary error color
+					success: '#7A9D54',   // A complementary success color
 				}
 			},
 			borderRadius: {

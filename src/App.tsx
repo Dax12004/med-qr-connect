@@ -34,6 +34,7 @@ import DoctorProfile from "./pages/doctor/Profile";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminUsers from "./pages/admin/Users";
 import AdminQrManagement from "./pages/admin/QrManagement";
+import AdminSettings from "./pages/admin/Settings";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +71,7 @@ const App = () => (
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/users" element={<AdminUsers />} />
               <Route path="/admin/qr-management" element={<AdminQrManagement />} />
+              <Route path="/admin/settings" element={<AdminSettings />} />
               
               {/* Catch-all route */}
               <Route path="*" element={<NotFound />} />

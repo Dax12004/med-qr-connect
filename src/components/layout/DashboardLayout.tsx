@@ -71,6 +71,10 @@ const icons = {
       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
       <polyline points="16 17 21 12 16 7" />
       <line x1="21" x2="9" y1="12" y2="12" />
+    </svg>,
+  settings: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+      <circle cx="12" cy="12" r="3" />
     </svg>
 };
 
@@ -149,6 +153,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         name: "QR Management",
         icon: icons.qrManagement,
         path: "/admin/qr-management"
+      }, {
+        name: "Settings",
+        icon: icons.settings,
+        path: "/admin/settings"
       }];
     }
     return [];
@@ -157,9 +165,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const navLinks = getNavLinks();
   
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Top Navbar */}
-      <header className="bg-white shadow-sm z-10">
+    <div className="min-h-screen flex flex-col bg-medical-light">
+      {/* Top Navbar - Fixed */}
+      <header className="bg-white shadow-sm z-10 fixed top-0 left-0 right-0">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center">
             <button 
@@ -185,7 +193,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           <div className="flex items-center space-x-4">
             <div className="text-right">
               <p className="text-sm text-medical-dark">
-                {user?.role === "doctor" ? "Dr. " : ""}{user?.name}
+                Welcome, {user?.role === "doctor" ? "Dr. " : ""}{user?.name}
               </p>
               <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
             </div>
@@ -196,23 +204,23 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </div>
       </header>
 
-      {/* Sidebar and Main Content */}
-      <div className="flex flex-grow relative">
-        {/* Sidebar */}
+      {/* Sidebar and Main Content - With fixed header offset */}
+      <div className="flex flex-grow pt-[65px]">
+        {/* Sidebar - Fixed position with scrolling */}
         <aside 
-          className={`fixed top-[65px] h-[calc(100vh-65px)] bg-white shadow-md z-10 transition-all duration-300 ease-in-out ${
+          className={`fixed top-[65px] h-[calc(100vh-65px)] bg-white shadow-md z-10 transition-all duration-300 ease-in-out overflow-y-auto ${
             isSidebarOpen ? "w-64 left-0" : "w-64 -left-64"
           }`}
         >
-          <nav className="pt-6 px-4 h-full flex flex-col justify-between">
-            <div className="space-y-1">
+          <nav className="h-full flex flex-col justify-between">
+            <div className="py-6 px-4 space-y-1 flex-grow">
               {navLinks.map(link => (
                 <Link 
                   key={link.path} 
                   to={link.path} 
                   className={`flex items-center py-3 px-4 rounded-md transition-colors ${
                     location.pathname === link.path 
-                      ? "bg-medical-light text-medical-primary" 
+                      ? "bg-medical-beige text-medical-primary" 
                       : "text-gray-600 hover:bg-gray-100"
                   }`}
                 >
@@ -222,7 +230,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               ))}
             </div>
 
-            <div className="mb-4 p-4">
+            <div className="p-4 border-t border-gray-200">
               <button 
                 onClick={handleLogout} 
                 className="flex items-center w-full py-3 rounded-md text-gray-600 hover:bg-gray-100 transition-colors px-[16px]"
@@ -234,8 +242,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </nav>
         </aside>
 
-        {/* Main Content */}
-        <main className={`flex-grow p-8 transition-all duration-300 ${
+        {/* Main Content - Adjusted margin based on sidebar state */}
+        <main className={`flex-grow p-8 transition-all duration-300 min-h-[calc(100vh-65px)] ${
           isSidebarOpen ? "ml-64" : "ml-0"
         }`}>
           {children}
