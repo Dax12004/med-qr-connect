@@ -8,7 +8,7 @@ channel = "stable-24_05"
 run = ["sh", "-c", "npm run dev"]
 
 [workflows]
-runButton = "backend"
+runButton = "dev"
 
 [[workflows.workflow]]
 name = "dev"
@@ -21,7 +21,7 @@ args = "npm install"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run dev"
+args = "npm run dev & node src/server/index.js"
 
 [[workflows.workflow]]
 name = "backend"
