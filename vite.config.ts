@@ -8,12 +8,15 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+
+    // 👇 Add this block to allow Replit's host
+    allowedHosts: [
+      "3661f7d3-91d5-4579-943e-0be0a01b071a-00-36s15bxrf77vl.pike.replit.dev",
+    ],
   },
-  plugins: [
-    react(),
-    mode === 'development' &&
-    componentTagger(),
-  ].filter(Boolean),
+  plugins: [react(), mode === "development" && componentTagger()].filter(
+    Boolean,
+  ),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
