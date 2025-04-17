@@ -31,16 +31,16 @@ const Login = () => {
       if (storedUser) {
         const user = JSON.parse(storedUser);
         
-        // Redirect based on role
+        // Redirect based on role - ensure we're using the navigate function
         if (user.role === "patient") {
           toast.success("Welcome to MediCard Patient Portal!");
-          navigate("/patient/dashboard");
+          navigate("/patient/dashboard", { replace: true });
         } else if (user.role === "doctor") {
           toast.success("Welcome to MediCard Doctor Portal!");
-          navigate("/doctor/dashboard");
+          navigate("/doctor/dashboard", { replace: true });
         } else if (user.role === "admin") {
           toast.success("Welcome to MediCard Admin Portal!");
-          navigate("/admin/dashboard");
+          navigate("/admin/dashboard", { replace: true });
         }
       }
     } catch (err) {

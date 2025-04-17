@@ -87,11 +87,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                     )}
                   </>
                 ) : (
-                  <>
-                    <Link to="/" className="text-medical-dark hover:text-medical-primary transition-colors">
-                      Home
-                    </Link>
-                  </>
+                  <>{/* Home link removed from here */}</>
                 )}
               </nav>
 

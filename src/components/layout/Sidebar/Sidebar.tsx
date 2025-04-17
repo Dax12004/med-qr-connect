@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { NavLink } from "../Navigation/NavLink";
 import { icons } from "../icons";
 
@@ -16,6 +16,13 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, navLinks, onLogout }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Function to handle navigation and prevent unwanted redirects on mobile
+  const handleNavigation = (path: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    navigate(path);
+  };
 
   return (
     <>
@@ -43,6 +50,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, navLinks, onLogout }) 
                   icon={link.icon}
                   name={link.name}
                   isActive={location.pathname === link.path}
+                  onClick={(e) => handleNavigation(link.path, e)}
                 />
               ))
             ) : (

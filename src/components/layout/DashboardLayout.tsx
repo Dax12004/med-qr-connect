@@ -27,7 +27,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   const handleLogout = () => {
     logout();
-    navigate("/");
+    // Navigate to login instead of home to prevent mobile redirect issues
+    navigate("/login");
   };
 
   // Navigation links based on user role
