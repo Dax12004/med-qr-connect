@@ -38,6 +38,7 @@ interface AuthContextType {
   logout: () => void;
   isAuthenticated: boolean;
   isLoading: boolean;
+  updateAdminCredentials: (newUsername: string, newPassword: string) => Promise<void>;
 }
 
 // Create context with default values
@@ -48,7 +49,14 @@ const AuthContext = createContext<AuthContextType>({
   logout: () => {},
   isAuthenticated: false,
   isLoading: true,
+  updateAdminCredentials: async () => {},
 });
+
+// Default admin credentials
+const DEFAULT_ADMIN = {
+  email: 'admin@qrmedi.com',
+  password: 'admin123'
+};
 
 // Auth Provider component
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -62,7 +70,51 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
-      // Mock login for demo - replace with actual API call
+      
+      // Check for admin login
+      if (email === DEFAULT_ADMIN.email && password === DEFAULT_ADMIN.password) {
+        // Admin login
+        const adminUser = {
+          id: 'admin-1',
+          name: 'Admin',
+          email: DEFAULT_ADMIN.email,
+          role: 'admin' as UserRole
+        };
+        
+        setUser(adminUser);
+        localStorage.setItem('user', JSON.stringify(adminUser));
+        
+        // Store admin credentials (in a real app, this would be more secure)
+        const adminCredentials = { 
+          username: DEFAULT_ADMIN.email, 
+          password: DEFAULT_ADMIN.password 
+        };
+        localStorage.setItem('adminCredentials', JSON.stringify(adminCredentials));
+        
+        setIsLoading(false);
+        return;
+      }
+      
+      // Check for custom admin credentials
+      const storedAdminCreds = localStorage.getItem('adminCredentials');
+      if (storedAdminCreds) {
+        const adminCreds = JSON.parse(storedAdminCreds);
+        if (email === adminCreds.username && password === adminCreds.password) {
+          const adminUser = {
+            id: 'admin-1',
+            name: 'Admin',
+            email: adminCreds.username,
+            role: 'admin' as UserRole
+          };
+          
+          setUser(adminUser);
+          localStorage.setItem('user', JSON.stringify(adminUser));
+          setIsLoading(false);
+          return;
+        }
+      }
+      
+      // Mock login for patient/doctor - replace with actual API call
       const mockUser = {
         id: '1',
         name: 'Test Patient',
@@ -119,6 +171,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Update admin credentials
+  const updateAdminCredentials = async (newUsername: string, newPassword: string) => {
+    try {
+      // Update the stored admin credentials
+      const adminCredentials = {
+        username: newUsername,
+        password: newPassword
+      };
+      
+      localStorage.setItem('adminCredentials', JSON.stringify(adminCredentials));
+      
+      // Update the current user if it's an admin
+      if (user && user.role === 'admin') {
+        const updatedUser = {
+          ...user,
+          email: newUsername
+        };
+        
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      }
+      
+      return Promise.resolve();
+    } catch (error) {
+      console.error('Update admin credentials error:', error);
+      return Promise.reject(error);
+    }
+  };
+
   // Logout function
   const logout = () => {
     setUser(null);
@@ -132,6 +213,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login,
         register,
         logout,
+        updateAdminCredentials,
         isAuthenticated: !!user,
         isLoading,
       }}

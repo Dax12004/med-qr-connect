@@ -1,9 +1,29 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const Settings = () => {
+  const { user, updateAdminCredentials } = useAuth();
   const [credentials, setCredentials] = useState({
     currentUsername: "",
     currentPassword: "",
@@ -13,6 +33,23 @@ const Settings = () => {
   });
   
   const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+
+  useEffect(() => {
+    // Get stored admin credentials
+    const storedCreds = localStorage.getItem('adminCredentials');
+    if (storedCreds) {
+      const { username } = JSON.parse(storedCreds);
+      // Auto-fill the current username if available
+      if (username) {
+        setCredentials(prev => ({
+          ...prev,
+          currentUsername: username
+        }));
+      }
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -22,58 +59,79 @@ const Settings = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const validateForm = () => {
     // Basic validation
     if (credentials.newPassword !== credentials.confirmPassword) {
-      toast({
-        title: "Error",
-        description: "New passwords do not match",
-        variant: "destructive"
-      });
+      toast.error("New passwords do not match");
+      return false;
+    }
+    
+    // Verify current credentials
+    const storedCreds = localStorage.getItem('adminCredentials');
+    if (!storedCreds) {
+      // Check against default admin credentials
+      if (
+        credentials.currentUsername !== 'admin@qrmedi.com' || 
+        credentials.currentPassword !== 'admin123'
+      ) {
+        toast.error("Current credentials are incorrect");
+        return false;
+      }
+    } else {
+      // Check against stored admin credentials
+      const { username, password } = JSON.parse(storedCreds);
+      if (
+        credentials.currentUsername !== username || 
+        credentials.currentPassword !== password
+      ) {
+        toast.error("Current credentials are incorrect");
+        return false;
+      }
+    }
+    
+    return true;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
       return;
     }
     
-    // Default admin credentials check (in a real app, this would be a backend check)
-    if (credentials.currentUsername !== "admin" || credentials.currentPassword !== "admin") {
-      toast({
-        title: "Error",
-        description: "Current credentials are incorrect",
-        variant: "destructive"
-      });
-      return;
-    }
-    
+    // Show confirmation dialog before proceeding
+    setShowConfirmDialog(true);
+  };
+  
+  const confirmCredentialUpdate = async () => {
+    setShowConfirmDialog(false);
     setIsLoading(true);
     
     try {
-      // Here you would make an API call to update credentials
-      // For this demo, we'll just simulate a successful update
-      setTimeout(() => {
-        toast({
-          title: "Success",
-          description: "Admin credentials updated successfully",
-        });
-        
-        setCredentials({
-          currentUsername: "",
-          currentPassword: "",
-          newUsername: "",
-          newPassword: "",
-          confirmPassword: "",
-        });
-        
-        setIsLoading(false);
-      }, 1000);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update credentials",
-        variant: "destructive"
+      // Update admin credentials
+      await updateAdminCredentials(credentials.newUsername, credentials.newPassword);
+      
+      // Show success dialog
+      setShowSuccessDialog(true);
+      
+      // Reset form
+      setCredentials({
+        currentUsername: credentials.newUsername,
+        currentPassword: "",
+        newUsername: "",
+        newPassword: "",
+        confirmPassword: "",
       });
+    } catch (error) {
+      toast.error("Failed to update credentials");
+      console.error(error);
+    } finally {
       setIsLoading(false);
     }
+  };
+
+  const closeSuccessDialog = () => {
+    setShowSuccessDialog(false);
   };
 
   return (
@@ -89,7 +147,7 @@ const Settings = () => {
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold text-medical-dark mb-4">Change Admin Credentials</h2>
           <p className="text-gray-500 mb-6">
-            Default admin credentials: Username: <code className="bg-medical-beige px-1 py-0.5 rounded">admin</code> / Password: <code className="bg-medical-beige px-1 py-0.5 rounded">admin</code>
+            Default admin credentials: Username: <code className="bg-medical-beige px-1 py-0.5 rounded">admin@qrmedi.com</code> / Password: <code className="bg-medical-beige px-1 py-0.5 rounded">admin123</code>
           </p>
           
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -189,6 +247,45 @@ const Settings = () => {
           </form>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Update</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to update the admin credentials?
+              You will need to login again with the new credentials after this change.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmCredentialUpdate}>
+              Yes, Update Credentials
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Success Dialog */}
+      <Dialog open={showSuccessDialog} onOpenChange={closeSuccessDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Credentials Updated Successfully</DialogTitle>
+            <DialogDescription>
+              Your admin credentials have been updated. Please use your new username and password the next time you log in.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <button
+              onClick={closeSuccessDialog}
+              className="px-4 py-2 bg-medical-primary text-white rounded-md hover:bg-medical-secondary focus:outline-none"
+            >
+              Got it
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 };

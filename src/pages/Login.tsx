@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import MainLayout from "@/components/layout/MainLayout";
+import { toast } from "sonner";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -25,20 +26,26 @@ const Login = () => {
     try {
       await login(email, password);
       
-      // Redirect based on role (handled by the AuthContext)
-      const storedUser = localStorage.getItem("medicalQrUser");
+      // Get the current user from localStorage
+      const storedUser = localStorage.getItem("user");
       if (storedUser) {
         const user = JSON.parse(storedUser);
+        
+        // Redirect based on role
         if (user.role === "patient") {
+          toast.success("Welcome to MediCard Patient Portal!");
           navigate("/patient/dashboard");
         } else if (user.role === "doctor") {
+          toast.success("Welcome to MediCard Doctor Portal!");
           navigate("/doctor/dashboard");
         } else if (user.role === "admin") {
+          toast.success("Welcome to MediCard Admin Portal!");
           navigate("/admin/dashboard");
         }
       }
     } catch (err) {
       setError("Invalid email or password");
+      toast.error("Login failed. Please check your credentials.");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -106,7 +113,13 @@ const Login = () => {
             </p>
           </div>
 
+          {/* Admin login hint */}
+          <div className="mt-10 pt-4 border-t border-gray-200 text-center">
+            <p className="text-xs text-gray-500">
+              Admin login: <span className="font-medium">admin@qrmedi.com</span> / Password: <span className="font-medium">admin123</span>
+            </p>
           </div>
+        </div>
       </div>
     </MainLayout>
   );
