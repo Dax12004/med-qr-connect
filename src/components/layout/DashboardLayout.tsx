@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -75,8 +76,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen flex flex-col bg-medical-light">
-      {/* Top Navbar - Changed from fixed to relative for better content flow */}
-      <header className="bg-white shadow-sm z-20 fixed top-0 left-0 right-0">
+      {/* Top Navbar */}
+      <header className="bg-white shadow-sm z-20 relative">
         <div className="px-4 py-4 flex justify-between items-center">
           <div className="flex items-center">
             <button
@@ -136,7 +137,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         onLogout={handleLogout}
       />
 
-      {/* Main Content - Updated to handle sidebar state and using mt-0 instead of min-h-[calc(100vh-65px)] */}
+      {/* Main Content */}
       <main
         className={`flex-grow p-8 transition-all duration-300 mt-16 ${
           isSidebarOpen ? "md:ml-64" : "ml-0"

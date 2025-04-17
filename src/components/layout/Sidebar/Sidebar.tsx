@@ -30,7 +30,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, navLinks, onLogout }) 
       <aside 
         className={`fixed top-[60px] h-[calc(100vh-60px)] bg-white shadow-lg z-30 transition-all duration-300 ease-in-out overflow-y-auto
           md:z-10 
-          ${isOpen ? "w-64 left-0" : "w-64 -left-64"}
+          ${isOpen ? "w-64 left-0" : "w-64 -left-64 md:left-0 md:w-0"}
         `}
       >
         <nav className="h-full flex flex-col justify-between">
