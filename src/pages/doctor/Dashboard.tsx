@@ -6,7 +6,7 @@ import { useMedicalRecord } from "@/contexts/MedicalRecordContext";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import AppointmentCard from "@/components/ui/AppointmentCard";
 
-import { QrReader } from 'react-qr-reader';
+import QrScanner from 'react-qr-scanner';
 
 const DoctorDashboard = () => {
   const { user } = useAuth();
@@ -15,15 +15,19 @@ const DoctorDashboard = () => {
   const [showScanner, setShowScanner] = useState(false);
   
   const handleScan = (result) => {
-    if (result) {
+    if (result && result.text) {
       try {
-        const data = JSON.parse(result?.text);
+        const data = JSON.parse(result.text);
         setScanResult(data);
         setShowScanner(false);
       } catch (error) {
         console.error('Invalid QR code data:', error);
       }
     }
+  };
+  
+  const handleError = (error) => {
+    console.error('QR Scanner error:', error);
   };
   
   // Get doctor-specific data
@@ -62,10 +66,11 @@ const DoctorDashboard = () => {
           
           {showScanner && (
             <div className="mt-4 max-w-md">
-              <QrReader
-                onResult={handleScan}
-                constraints={{ facingMode: 'environment' }}
-                className="w-full"
+              <QrScanner
+                onScan={handleScan}
+                onError={handleError}
+                style={{ width: '100%' }}
+                delay={300}
               />
             </div>
           )}
