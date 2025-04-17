@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState } from 'react';
 // User role types
 export type UserRole = "patient" | "doctor" | "admin";
@@ -82,12 +83,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Register function
+  // Register function - Updated to properly save user data
   const register = async (userData: any) => {
     try {
-      // Implement actual registration logic here
+      setIsLoading(true);
+      
+      // Generate a unique ID
+      const userId = Date.now().toString();
+      
+      // Create user object based on role
+      const newUser = {
+        id: userId,
+        name: userData.name,
+        email: userData.email,
+        role: userData.role as UserRole,
+      };
+      
+      // Add role-specific data
+      if (userData.role === 'patient' && userData.patientData) {
+        Object.assign(newUser, { patientData: userData.patientData });
+      } else if (userData.role === 'doctor' && userData.doctorData) {
+        Object.assign(newUser, { doctorData: userData.doctorData });
+      }
+      
+      // Save user to localStorage
+      localStorage.setItem('user', JSON.stringify(newUser));
+      
+      // Set user in state
+      setUser(newUser);
       setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       console.error('Registration error:', error);
       throw error;
     }

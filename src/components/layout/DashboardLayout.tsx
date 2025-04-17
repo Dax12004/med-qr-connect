@@ -1,10 +1,11 @@
 
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sidebar } from "./Sidebar/Sidebar";
 import { UserMenu } from "./Navigation/UserMenu";
 import { icons } from "./icons";
+import { toast } from "sonner";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -13,7 +14,16 @@ interface DashboardLayoutProps {
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!user) {
+      toast.error("Please login to access this page");
+      navigate("/login");
+    }
+  }, [user, navigate]);
 
   const handleLogout = () => {
     logout();
@@ -73,6 +83,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   };
 
   const navLinks = getNavLinks();
+
+  if (!user) {
+    return null; // Don't render anything if user is not authenticated
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-medical-light">

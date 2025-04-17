@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth, UserRole } from "@/contexts/AuthContext";
 import MainLayout from "@/components/layout/MainLayout";
+import { toast } from "sonner";
 
 // Options for blood group dropdown
 const bloodGroupOptions = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
@@ -134,6 +135,7 @@ const Register = () => {
       }
 
       await register(userData);
+      toast.success("Registration successful! Redirecting to dashboard...");
 
       // Redirect based on role
       if (formData.role === "patient") {
@@ -145,6 +147,7 @@ const Register = () => {
       }
     } catch (err) {
       setError("Registration failed. Please try again.");
+      toast.error("Registration failed. Please try again.");
       console.error(err);
     } finally {
       setIsLoading(false);

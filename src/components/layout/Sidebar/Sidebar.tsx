@@ -35,15 +35,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, navLinks, onLogout }) 
       >
         <nav className="h-full flex flex-col justify-between">
           <div className="py-6 px-4 space-y-1 flex-grow">
-            {navLinks.map(link => (
-              <NavLink 
-                key={link.path}
-                to={link.path}
-                icon={link.icon}
-                name={link.name}
-                isActive={location.pathname === link.path}
-              />
-            ))}
+            {navLinks && navLinks.length > 0 ? (
+              navLinks.map(link => (
+                <NavLink 
+                  key={link.path}
+                  to={link.path}
+                  icon={link.icon}
+                  name={link.name}
+                  isActive={location.pathname === link.path}
+                />
+              ))
+            ) : (
+              <div className="text-center py-4 text-gray-500">No menu items available</div>
+            )}
           </div>
           <div className="p-4 border-t border-gray-200">
             <button 
