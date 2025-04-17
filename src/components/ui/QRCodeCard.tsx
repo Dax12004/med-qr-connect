@@ -16,15 +16,15 @@ const QRCodeCard: React.FC<QRCodeCardProps> = ({
   className = "",
 }) => {
   return (
-    <div className={`bg-white p-6 rounded-lg shadow-md ${className}`}>
-      <h3 className="text-lg font-semibold text-medical-dark mb-4">{title}</h3>
+    <div className={`bg-white p-6 rounded-lg shadow-md space-y-4 ${className}`}>
+      <h3 className="text-lg font-semibold text-medical-dark">{title}</h3>
       
-      <div className="flex flex-col items-center justify-center space-y-4 mb-4">
-        <div className="bg-white p-3 rounded-lg border border-gray-200">
+      <div className="flex flex-col items-center justify-center space-y-4">
+        <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
           <QRCodeSVG
             value={data}
-            size={200}
-            level="H" // High error correction capability
+            size={180}
+            level="H"
             imageSettings={{
               src: "/public/favicon.ico",
               excavate: true,
@@ -35,7 +35,7 @@ const QRCodeCard: React.FC<QRCodeCardProps> = ({
         </div>
         
         {description && (
-          <p className="text-sm text-gray-600 text-center">{description}</p>
+          <p className="text-sm text-gray-600 text-center max-w-xs">{description}</p>
         )}
       </div>
       
